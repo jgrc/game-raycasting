@@ -5,7 +5,8 @@
         this._callabe_function = callabe_function;
         this._fov = fov;
         this._num_rays = num_rays;
-        
+
+        this._fish_eye = false;
         this._rays = [];
     };
 
@@ -52,7 +53,9 @@
                     var dec_y = ray.y - Math.floor(ray.y);
                     var type_step = 0;
                     var distance = Math.sqrt((ray.x - pos.x) * (ray.x - pos.x) + (ray.y - pos.y) * (ray.y - pos.y));
-                   
+                    if (false === this._fish_eye) {
+                        distance *= Math.cos(dir.angle() - ray_dir.angle());
+                    }
                     return { ini : pos, end : ray, distance : distance };
                 }
                 
