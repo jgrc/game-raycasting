@@ -27,15 +27,24 @@
             this._ray_casting,
             5
         );
+
+        this._map25d_render = new GAME.Map25DRender(
+            this._map,
+            this._ray_casting
+        );
     };
 
     Game.prototype = {
         getMiniMapCanvas : function () {
             return this._minimap_render.getCanvas();
         },
-        updateCamera : function (fov, num_rays) {
+        get25dCanvas : function () {
+            return this._map25d_render.getCanvas();
+        },
+        updateCamera : function (fov, num_rays, fish_eye) {
             this._ray_casting._fov = JLAB.UTILS.MATH.deg2Rad(fov);
             this._ray_casting._num_rays = num_rays;
+            this._ray_casting._fish_eye = fish_eye;
         },
         start : function() {
             this._timer.start();
@@ -65,6 +74,7 @@
         },
         _render : function() {
             this._minimap_render.render();
+            this._map25d_render.render();
         }
     };
 
@@ -79,7 +89,8 @@
                 'js/Game/Map.js',
                 'js/Game/Player.js',
                 'js/Game/RayCasting.js',
-                'js/Game/MiniMapRender.js'
+                'js/Game/MiniMapRender.js',
+                'js/Game/Map25DRender.js'
             ],
             function() {            
                 var game = new Game(fov, num_rays);

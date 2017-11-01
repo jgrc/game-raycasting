@@ -6,6 +6,7 @@
         <script type="text/javascript">
             
             var prepare_game = function () {
+                var map25d_ele = document.getElementById('map25d');
                 var minimap_ele = document.getElementById('minimap');
 
                 var fov_ele = document.getElementById('fov');
@@ -17,6 +18,8 @@
                 var rays_value_ele = document.getElementById('rays_value');
                 var rays_less = document.getElementById('rays_less');
                 var rays_more = document.getElementById('rays_more');
+
+                var fish_eye_ele = document.getElementById('fish_eye');
 
                 GAME.start(
                     60,
@@ -35,9 +38,10 @@
                             fov_value_ele.innerText = current_fov;
                             rays_value_ele.innerText = current_rays;
 
-                            game.updateCamera(current_fov, current_rays);
+                            game.updateCamera(current_fov, current_rays, fish_eye_ele.checked);
                         }
 
+                        map25d_ele.appendChild(game.get25dCanvas());
                         minimap_ele.appendChild(game.getMiniMapCanvas());
 
                         fov_ele.addEventListener('change', function() { update(); });
@@ -47,6 +51,8 @@
                         rays_ele.addEventListener('change', function() { update(); });
                         rays_less.addEventListener('click', function() { buttons_action(rays_ele, false);});
                         rays_more.addEventListener('click', function() { buttons_action(rays_ele, true); });
+
+                        fish_eye_ele.addEventListener('change', function() { update(); });
 
                         update();
                     }
@@ -60,12 +66,15 @@
         </script>
     </head>
     <body>
+        <div id="map25d"></div>
         <div id="minimap"></div>
         <div>
 
             <button id="fov_less">-</button><input id="fov" type="range" min="1" max="360" value="60" /><button id="fov_more">+</button> <span id ="fov_value"></span> - FOV
             <br/>
-            <button id="rays_less">-</button><input id="rays" type="range" min="1" max="640" value="10" /><button id="rays_more">+</button> <span id ="rays_value"></span> - RAYS
+            <button id="rays_less">-</button><input id="rays" type="range" min="1" max="640" value="320" /><button id="rays_more">+</button> <span id ="rays_value"></span> - RAYS
+            <br>
+            <input id="fish_eye" type="checkbox" /> - Fish Eye
         </div>
     </body>
 </html>
