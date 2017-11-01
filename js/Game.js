@@ -12,12 +12,19 @@
             this._map
         );
 
+        this._ray_casting = new GAME.RayCasting(
+            function (x, y) { return false === self._map.isWalkable(x, y); },
+            JLAB.UTILS.MATH.deg2Rad(fov),
+            rays
+        );
+
         this._keyboard = new JLAB.INPUT.Keyboard();
         this._timer = new JLAB.UTILS.DeltaTimer();
 
         this._minimap_render = new GAME.MiniMapRender(
             this._map,
             this._player,
+            this._ray_casting,
             5
         );
     };
@@ -25,6 +32,10 @@
     Game.prototype = {
         getMiniMapCanvas : function () {
             return this._minimap_render.getCanvas();
+        },
+        updateCamera : function (fov, num_rays) {
+            this._ray_casting._fov = JLAB.UTILS.MATH.deg2Rad(fov);
+            this._ray_casting._num_rays = num_rays;
         },
         start : function() {
             this._timer.start();
@@ -50,13 +61,14 @@
             };
 
             this._player.update(delta, player_request, this._map);
+            this._ray_casting.update(this._player._pos, this._player._dir);
         },
         _render : function() {
             this._minimap_render.render();
         }
     };
 
-    var start = function(callback) {
+    var start = function(fov, num_rays, callback) {
         JLAB.loader(
             [
                 'js/Jlab/Output/Canvas2D.js',
@@ -66,10 +78,11 @@
                 'js/Jlab/Utils/DeltaTimer.js',
                 'js/Game/Map.js',
                 'js/Game/Player.js',
-                'js/Game/MiniMapRender.js',
+                'js/Game/RayCasting.js',
+                'js/Game/MiniMapRender.js'
             ],
             function() {            
-                var game = new Game();
+                var game = new Game(fov, num_rays);
                 game.start();
                 callback(game);
             }

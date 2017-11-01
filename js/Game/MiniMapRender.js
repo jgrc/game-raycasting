@@ -1,9 +1,10 @@
 "use strict";
 
 (function(GAME) {
-    var MiniMapRender = function (map, player, tile_size) {
+    var MiniMapRender = function (map, player, ray_casting, tile_size) {
         this._map = map;
         this._player = player;
+        this._ray_casting = ray_casting;
         this._tile_size = tile_size;
 
         this._canvas = new JLAB.OUTPUT.Canvas2D({
@@ -20,6 +21,7 @@
         render : function () {
             this._canvas.clear();
             this._render_map();
+            this._render_ray_casting();
             this._render_player();
         },
         _render_map : function () {
@@ -54,7 +56,20 @@
             ctx.stroke();
 
             ctx.translate(-player_pos.x * this._tile_size, -player_pos.y * this._tile_size);
-        }
+        },
+        _render_ray_casting : function () {
+            var ctx = this._canvas.getCtx();
+            var rays = this._ray_casting.getRays();
+
+            for (var i = 0, n = rays.length; i < n; i++) {
+                var ray = rays[i];
+                ctx.beginPath();
+                ctx.moveTo(ray.ini.x * this._tile_size, ray.ini.y * this._tile_size);
+                ctx.lineTo(ray.end.x * this._tile_size, ray.end.y * this._tile_size);
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+            }
+        },
     };
 
     JLAB.extend(GAME, { MiniMapRender : MiniMapRender });

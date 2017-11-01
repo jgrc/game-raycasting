@@ -8,9 +8,47 @@
             var prepare_game = function () {
                 var minimap_ele = document.getElementById('minimap');
 
+                var fov_ele = document.getElementById('fov');
+                var fov_value_ele = document.getElementById('fov_value');
+                var fov_less = document.getElementById('fov_less');
+                var fov_more = document.getElementById('fov_more');
+
+                var rays_ele = document.getElementById('rays');
+                var rays_value_ele = document.getElementById('rays_value');
+                var rays_less = document.getElementById('rays_less');
+                var rays_more = document.getElementById('rays_more');
+
                 GAME.start(
+                    60,
+                    320,
                     function (game) {
+                        function buttons_action(range_element, increase) {
+                            var value = parseInt(range_element.value);
+                            range_element.value = increase ? Math.min(value + 1, range_element.max) : Math.max(value - 1, range_element.min);
+                            update();
+                        }
+
+                        function update() {
+                            var current_fov = fov_ele.value;
+                            var current_rays = rays_ele.value;
+
+                            fov_value_ele.innerText = current_fov;
+                            rays_value_ele.innerText = current_rays;
+
+                            game.updateCamera(current_fov, current_rays);
+                        }
+
                         minimap_ele.appendChild(game.getMiniMapCanvas());
+
+                        fov_ele.addEventListener('change', function() { update(); });
+                        fov_less.addEventListener('click', function() { buttons_action(fov_ele, false); });
+                        fov_more.addEventListener('click', function() { buttons_action(fov_ele, true); });
+
+                        rays_ele.addEventListener('change', function() { update(); });
+                        rays_less.addEventListener('click', function() { buttons_action(rays_ele, false);});
+                        rays_more.addEventListener('click', function() { buttons_action(rays_ele, true); });
+
+                        update();
                     }
                 );
             }
@@ -23,5 +61,11 @@
     </head>
     <body>
         <div id="minimap"></div>
+        <div>
+
+            <button id="fov_less">-</button><input id="fov" type="range" min="1" max="360" value="60" /><button id="fov_more">+</button> <span id ="fov_value"></span> - FOV
+            <br/>
+            <button id="rays_less">-</button><input id="rays" type="range" min="1" max="640" value="10" /><button id="rays_more">+</button> <span id ="rays_value"></span> - RAYS
+        </div>
     </body>
 </html>
