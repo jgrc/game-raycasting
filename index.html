@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Steering behavior</title>
+        <script type="text/javascript" src="js/Jlab/Loader.js"></script>
+        <script type="text/javascript">
+            
+            var prepare_game = function () {
+                var minimap_ele = document.getElementById('minimap');
+
+                GAME.start(
+                    function (game) {
+                        minimap_ele.appendChild(game.getMiniMapCanvas());
+                    }
+                );
+            }
+
+            window.addEventListener('load', function load() {
+                JLAB.loader(['js/Game.js'], prepare_game); 
+            });
+
+        </script>
+    </head>
+    <body>
+        <div id="minimap"></div>
+    </body>
+</html>
