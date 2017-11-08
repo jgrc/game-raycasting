@@ -48,10 +48,6 @@
             while (true) {
                 if (this._callabe_function(int_x, int_y)) {
                     var ray = new JLAB.GEOMETRY.Vector2D(pos.x + t * ray_dir.x, pos.y + t * ray_dir.y);
-                    var dec_x = ray.x - Math.floor(ray.x);
-                    dec_x = Math.round(dec_x * 100) / 100;
-                    var dec_y = ray.y - Math.floor(ray.y);
-                    var type_step = 0;
                     var distance = Math.sqrt((ray.x - pos.x) * (ray.x - pos.x) + (ray.y - pos.y) * (ray.y - pos.y));
                     if (false === this._fish_eye) {
                         distance *= Math.cos(dir.angle() - ray_dir.angle());
@@ -63,12 +59,10 @@
                     int_x += step_x;
                     t = max_tx;
                     max_tx += delta_tx;
-                    type_step = 0;
                 } else {
                     int_y += step_y;
                     t = max_ty;
                     max_ty += delta_ty;
-                    type_step = 1;
                 }
             }
         }
