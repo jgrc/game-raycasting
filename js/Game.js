@@ -2,18 +2,36 @@
 
 (function(W) {
 
-    var Game = function(fov, rays) {
+    var Game = function(fov, rays, load_callback) {
         var self = this;
+
+        this.resources = new JLAB.UTILS.Resources(
+            {
+                texture_1 : 'textures/1.GIF',
+                texture_5 : 'textures/5.GIF',
+                texture_7 : 'textures/7.GIF',
+                texture_13 : 'textures/13.GIF',
+                texture_9 : 'textures/9.GIF',
+                texture_11 : 'textures/11.GIF',
+                texture_17 : 'textures/17.GIF',
+                texture_19 : 'textures/19.GIF',
+                texture_21 : 'textures/21.GIF',
+                texture_2 : 'textures/2.png',
+                texture_23 : 'textures/23.GIF'
+            }
+        );
+
         this._map = new GAME.Map();
         this._player = new GAME.Player(
-            new JLAB.GEOMETRY.Vector2D(2, 2),
+            new JLAB.GEOMETRY.Vector2D(2, 55),
             new JLAB.GEOMETRY.Vector2D(1, 0),
-            0.5,
+            0.2,
             this._map
         );
 
         this._ray_casting = new GAME.RayCasting(
             function (x, y) { return false === self._map.isWalkable(x, y); },
+            function (x, y) { return self._map.getTile(x, y); },
             JLAB.UTILS.MATH.deg2Rad(fov),
             rays
         );
@@ -30,8 +48,13 @@
 
         this._map25d_render = new GAME.Map25DRender(
             this._map,
-            this._ray_casting
+            this._ray_casting,
+            this.resources.images
         );
+
+        this.resources.load(function () {
+            load_callback.call(self);
+        });
     };
 
     Game.prototype = {
@@ -40,11 +63,6 @@
         },
         get25dCanvas : function () {
             return this._map25d_render.getCanvas();
-        },
-        updateCamera : function (fov, num_rays, fish_eye) {
-            this._ray_casting._fov = JLAB.UTILS.MATH.deg2Rad(fov);
-            this._ray_casting._num_rays = num_rays;
-            this._ray_casting._fish_eye = fish_eye;
         },
         start : function() {
             this._timer.start();
@@ -86,6 +104,7 @@
                 'js/Jlab/Input/Keyboard.js',
                 'js/Jlab/Utils/Math.js',
                 'js/Jlab/Utils/DeltaTimer.js',
+                'js/Jlab/Utils/Resources.js',
                 'js/Game/Map.js',
                 'js/Game/Player.js',
                 'js/Game/RayCasting.js',
@@ -93,8 +112,9 @@
                 'js/Game/Map25DRender.js'
             ],
             function() {            
-                var game = new Game(fov, num_rays);
-                game.start();
+                var game = new Game(fov, num_rays, function () {
+                    this.start();
+                });
                 callback(game);
             }
         );

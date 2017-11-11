@@ -29,7 +29,7 @@
             for (var y = 0; y < this._map.getColumns(); y++) {
                 for (var x = 0; x < this._map.getRows(); x++) {
                     var tile = this._map.getTile(x, y);
-                    if (tile === 1) {
+                    if (tile > 0) {
                         ctx.fillStyle = 'black';
                         ctx.fillRect(x * this._tile_size, y * this._tile_size, this._tile_size, this._tile_size);
                     }
@@ -43,7 +43,7 @@
             ctx.translate(player_pos.x * this._tile_size, player_pos.y * this._tile_size); 
 
             ctx.beginPath();
-            ctx.arc(0, 0, this._player.getRadius() * this._tile_size, 0, 2 * Math.PI, false);
+            ctx.arc(0, 0, this._player.getRadius() * this._tile_size * 2, 0, 2 * Math.PI);
             ctx.lineWidth = 1;
             ctx.fillStyle = 'blue';
             ctx.fill();

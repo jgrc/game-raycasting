@@ -1,12 +1,11 @@
 "use strict";
 
 (function(GAME) {
-    var RayCasting = function (callabe_function, fov, num_rays) {
-        this._callabe_function = callabe_function;
+    var RayCasting = function (colision_function, wall_function, fov, num_rays) {
+        this.colision_function = colision_function;
+        this.wall_function = wall_function;
         this._fov = fov;
         this._num_rays = num_rays;
-
-        this._fish_eye = false;
         this._rays = [];
     };
 
@@ -45,24 +44,28 @@
             var max_tx = delta_tx < Infinity ? delta_tx * dist_x : Infinity;
             var max_ty = delta_ty < Infinity ? delta_ty * dist_y : Infinity;
 
+            var last_step = 'none';
+
             while (true) {
-                if (this._callabe_function(int_x, int_y)) {
+                if (this.colision_function(int_x, int_y)) {
+                    var wall = this.wall_function(int_x, int_y);
                     var ray = new JLAB.GEOMETRY.Vector2D(pos.x + t * ray_dir.x, pos.y + t * ray_dir.y);
                     var distance = Math.sqrt((ray.x - pos.x) * (ray.x - pos.x) + (ray.y - pos.y) * (ray.y - pos.y));
-                    if (false === this._fish_eye) {
-                        distance *= Math.cos(dir.angle() - ray_dir.angle());
-                    }
-                    return { ini : pos, end : ray, distance : distance };
+                    distance *= Math.cos(dir.angle() - ray_dir.angle());
+                    var colision =  last_step == 'x' && step_x > 0 ? 'left' : (last_step == 'x' && step_x < 0 ? 'right' : (step_y > 0 ? 'up' : 'down'));
+                    return { ini : pos, end : ray, distance : distance, colision : colision, wall : wall };
                 }
                 
                 if (max_tx < max_ty) {
                     int_x += step_x;
                     t = max_tx;
                     max_tx += delta_tx;
+                    last_step = 'x';
                 } else {
                     int_y += step_y;
                     t = max_ty;
                     max_ty += delta_ty;
+                    last_step = 'y';
                 }
             }
         }
